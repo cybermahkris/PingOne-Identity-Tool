@@ -12,4 +12,4 @@ An open-source, locally-hosted web application to streamline PingOne Identity Op
 ## Prerequisites
 * Python 3.7+
 * A PingOne environment.
-* A PingOne "Worker App" configured with `Sign On and Identity Management` roles to allow User read/update capabilities.
+* A PingOne "Worker App" configured with `Identity Data Admin` roles to allow User read/update capabilities.
