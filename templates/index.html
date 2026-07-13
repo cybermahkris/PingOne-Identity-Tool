@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PingOne Identity Tool</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; padding-top: 2rem; }
+        .card { box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        .table-container { max-height: 400px; overflow-y: auto; }
+        .coming-soon-card { background-color: #e9ecef; border: 2px dashed #dee2e6; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2 class="mb-2 text-center">PingOne Identity Tool</h2>
+    <p class="text-center text-muted mb-4">A unified portal for PingOne Identity operations.</p>
+    
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-tabs mb-4 justify-content-center" id="toolTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="config-tab" data-bs-toggle="tab" data-bs-target="#config-pane" type="button" role="tab" aria-controls="config-pane" aria-selected="true">
+                Bootstrapping (Config)
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="password-tab" data-bs-toggle="tab" data-bs-target="#password-pane" type="button" role="tab" aria-controls="password-pane" aria-selected="false">
+                Bulk Password Update
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="mfa-tab" data-bs-toggle="tab" data-bs-target="#mfa-pane" type="button" role="tab" aria-controls="mfa-pane" aria-selected="false">
+                Reset MFA Devices (Upcoming)
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="toolTabsContent">
+        
+        <!-- TAB 1: Bootstrapping / Configuration -->
+        <div class="tab-pane fade show active" id="config-pane" role="tabpanel" aria-labelledby="config-tab" tabindex="0">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <strong>Environment Bootstrapping</strong>
+                        </div>
+                        <div class="card-body">
+                            <form id="configForm">
+                                <div class="mb-3">
+                                    <label class="form-label">Environment ID</label>
+                                    <input type="text" id="envId" class="form-control" placeholder="e.g. 1234abcd-56ef-78gh-90ij-1234567890ab" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">API Path</label>
+                                    <input type="text" id="apiPath" class="form-control" value="https://api.pingone.com/v1" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Auth Path</label>
+                                    <input type="text" id="authPath" class="form-control" value="https://auth.pingone.com" required>
+                                    <div class="form-text">Change suffix for EU (.eu) or Asia (.asia) if needed.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Client ID (Worker App)</label>
+                                    <input type="text" id="clientId" class="form-control" placeholder="e.g. 2f825ece-177d-4023..." required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Client Secret</label>
+                                    <input type="password" id="clientSecret" class="form-control" placeholder="Your PingOne Worker App Secret" required>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: Bulk Password Update -->
+        <div class="tab-pane fade" id="password-pane" role="tabpanel" aria-labelledby="password-tab" tabindex="0">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <strong>Bulk Update Details</strong>
+                        </div>
+                        <div class="card-body">
+                            <form id="bulkForm">
+                                <div class="mb-3">
+                                    <label class="form-label">Usernames (One per line)</label>
+                                    <textarea id="usernames" class="form-control" rows="6" placeholder="user1.name&#10;user2.name" required></textarea>
+                                    <div class="form-text">The system will look up the internal PingOne UUID using these usernames.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">New Password</label>
+                                    <input type="password" id="newPassword" class="form-control" required>
+                                </div>
+                                <button type="submit" id="submitBtn" class="btn btn-success w-100">Update Passwords</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Results Table -->
+                    <div class="card d-none" id="resultsCard">
+                        <div class="card-header bg-dark text-white">
+                            <strong>Execution Results</strong>
+                        </div>
+                        <div class="card-body p-0 table-container">
+                            <table class="table table-striped table-hover mb-0">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Status</th>
+                                        <th>Message</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="resultsBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: Reset MFA Devices (Upcoming) -->
+        <div class="tab-pane fade" id="mfa-pane" role="tabpanel" aria-labelledby="mfa-tab" tabindex="0">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card coming-soon-card">
+                        <div class="card-body text-center py-5">
+                            <h3 class="text-secondary mb-3">Reset MFA Devices</h3>
+                            <span class="badge bg-warning text-dark mb-4 fs-6">Coming Soon</span>
+                            <p class="lead">
+                                Bulk password change is just the first functionality available today. More features are coming in the near future for PingOne Identity operations!
+                            </p>
+                            <p class="text-muted mx-auto" style="max-width: 600px;">
+                                <strong>Upcoming Feature:</strong> You will soon be able to reset and clean up MFA devices associated with user profiles.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.getElementById('bulkForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const configForm = document.getElementById('configForm');
+    if (!configForm.checkValidity()) {
+        const configTab = new bootstrap.Tab(document.getElementById('config-tab'));
+        configTab.show();
+        setTimeout(() => configForm.reportValidity(), 200);
+        return;
+    }
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Processing... Please wait';
+
+    const payload = {
+        envId: document.getElementById('envId').value,
+        apiPath: document.getElementById('apiPath').value,
+        authPath: document.getElementById('authPath').value,
+        clientId: document.getElementById('clientId').value,
+        clientSecret: document.getElementById('clientSecret').value,
+        usernames: document.getElementById('usernames').value,
+        newPassword: document.getElementById('newPassword').value
+    };
+
+    try {
+        const response = await fetch('/api/update-passwords', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        
+        if (!response.ok) {
+            alert(`Error: ${data.error}\nDetails: ${JSON.stringify(data.details)}`);
+        } else {
+            const resultsCard = document.getElementById('resultsCard');
+            const resultsBody = document.getElementById('resultsBody');
+            
+            resultsBody.innerHTML = '';
+            data.results.forEach(res => {
+                const tr = document.createElement('tr');
+                const badgeClass = res.status === 'Success' ? 'bg-success' : 'bg-danger';
+                tr.innerHTML = `
+                    <td>${res.username}</td>
+                    <td><span class="badge ${badgeClass}">${res.status}</span></td>
+                    <td>${res.message}</td>
+                `;
+                resultsBody.appendChild(tr);
+            });
+            resultsCard.classList.remove('d-none');
+        }
+    } catch (error) {
+        alert('A network error occurred. Check the console.');
+        console.error(error);
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Update Passwords';
+    }
+});
+</script>
+</body>
+</html>
