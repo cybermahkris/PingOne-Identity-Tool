@@ -7,7 +7,7 @@ An open-source, locally-hosted web application to streamline PingOne Identity Op
 ## Features
 * **Bootstrapping UI:** Easily configure your Environment ID and Worker App credentials.
 * **Bulk Password Reset:** Paste a list of usernames to securely resolve their PingOne UUIDs and reset their passwords using the PingOne Admin APIs.
-* **More coming soon:** Future updates will include Diagnostic Scanner (3-second scan of user profile metadata for login failures), Kill Switch (emergency offboarding to disable user, delete all sessions, update with random password and removing memberships) and MFA Compliance (check MFA adoption percentage, check weak MFA methods, user notification to use modern methods etc.,).
+* **More coming soon:** Future updates will include Diagnostic Scanner (3-second scan of user profile metadata for login failures), Kill Switch (emergency offboarding to disable user, delete all sessions, update with random password and removing memberships) and MFA Compliance (check MFA adoption percentage, check weak MFA methods, user notification to use modern methods), MFA Reset (clear some or all MFA devices registered), Account Unlock, Helpdesk ROI (internal telemetry to list stats for actions performed in a period, avg time saved per ticket, total helpdesk hours saved converting to $$$ saved).
 
 ## Prerequisites
 * Python 3.7+
